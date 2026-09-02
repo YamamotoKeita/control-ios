@@ -1,6 +1,6 @@
 ---
 name: control-ios
-description: iOS Simulator を起動・操作する。タップ・スワイプ・スクロール・スクリーンショット取得・テキスト入力・AXツリー参照など。画面確認や UI の操作、アプリの動作確認をエージェントで行う際に使用。simulator 操作、serve-sim、画面をタップ/スクロール、スクショ確認 などの言及時に使用。
+description: iOS Simulator を起動・操作する。タップ・スワイプ・スクロール・ピンチ（ズーム）・スクリーンショット取得・テキスト入力・AXツリー参照など。画面確認や UI の操作、アプリの動作確認をエージェントで行う際に使用。simulator 操作、serve-sim、画面をタップ/スクロール、スクショ確認 などの言及時に使用。
 ---
 `serve-sim` CLI と `xcrun simctl` で iOS Simulator を確認・操作するスキル。定型操作は `{THIS_SKILL_DIR}/scripts/`（接続先解決・座標変換・在室判定などを内包）で行う。
 
@@ -68,7 +68,7 @@ python3 {THIS_SKILL_DIR}/scripts/ax_tools.py list           # type / 正規化�
 - **無効（グレーアウト）のボタンは AX に存在するが tap しても無反応**。スクショで淡色表示を疑い別経路へ。
 - **AX は最大500要素まで**。上限到達画面（`list` が警告）はスクショ併用。**上限到達時はラベル未発見でも要素が無いとは限らない**（実在ボタンが取りこぼされる実測あり）。スクショ目視 + `--norm` にフォールバックする。
 
-## ジェスチャー（スクロール・ドラッグ・戻る）
+## ジェスチャー（スクロール・ドラッグ・ピンチ・戻る）
 
 `{THIS_SKILL_DIR}/scripts/scroll.sh <up|down> [fast|slow] [short|long]`。up/down は**見たいコンテンツの方向**（`down`=ページを下へ）。既定は低速・慣性抑制、`short` で振り幅小。
 
@@ -82,6 +82,18 @@ python3 {THIS_SKILL_DIR}/scripts/ax_tools.py list           # type / 正規化�
 ```sh
 {THIS_SKILL_DIR}/scripts/drag.sh '[{"type":"begin","x":0.5,"y":0.2},{"type":"move","x":0.5,"y":0.6},{"type":"end","x":0.5,"y":0.9}]'
 ```
+
+ピンチ（地図・画像のズーム）は `{THIS_SKILL_DIR}/scripts/pinch.sh <in|out> [--center cx cy] [--from d] [--to d] [--steps N] [--delay ms]`。2本指を中心 `(cx,cy)` の左右 `(cx-d, cy)` / `(cx+d, cy)` に置き、中心からの距離を `from → to` に動かす（正規化座標）。既定は中心 `(0.5,0.5)`、out は `0.05→0.35`、in は `0.35→0.05`。
+
+```sh
+{THIS_SKILL_DIR}/scripts/pinch.sh out                    # 拡大
+{THIS_SKILL_DIR}/scripts/pinch.sh in --center 0.5 0.4    # 中心を指定して縮小
+{THIS_SKILL_DIR}/scripts/pinch.sh out --from 0.05 --to 0.2   # 控えめに拡大
+```
+
+- **ピンチは `drag.sh` / 単指 `gesture` を2本ぶん交互に送っても再現できない**（単指ドラッグ＝パン扱いになる）。serve-sim の WS は opcode `0x03`（単指 `{type,x,y}`）と `0x05`（2本指 `{type,x1,y1,x2,y2}`）で別経路で、`gesture.cjs` は `x1/x2` を持つイベントを自動で `0x05` に振り分ける。任意の2本指ジェスチャーは `drag.sh` に `x1,y1,x2,y2` 形式のイベント列を渡せばよい。
+- **指を縦に広げない**。下端（検索バー・シート）や上端を踏むとシート引き上げ等の別ジェスチャに化ける（Maps で実測）。`--center` の y を端に寄せる時も `--from/--to` は x 方向の距離のみに効く。
+- ズーム後は約2秒 settle 待ちしてからスクショ / AX を取り直す。
 
 注意:
 
@@ -146,4 +158,4 @@ npx serve-sim@0.1.44 --kill     # 全停止（特定の1台は --kill "<device>"
 ## 参考リファレンス（必要時のみ）
 
 - 権限ダイアログの事前付与/拒否: <{THIS_SKILL_DIR}/references/permission.md>
-- カメラ注入 / アプリ権限 / 回転 / CoreAnimation / pinch・edge / 全エンドポイント: serve-sim 公式 references（<https://github.com/EvanBacon/serve-sim/tree/main/skills/serve-sim/references>）
+- カメラ注入 / アプリ権限 / 回転 / CoreAnimation / edge スワイプ / 全エンドポイント: serve-sim 公式 references（<https://github.com/EvanBacon/serve-sim/tree/main/skills/serve-sim/references>）
