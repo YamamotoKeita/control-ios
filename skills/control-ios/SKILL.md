@@ -1,6 +1,8 @@
 ---
 name: control-ios
 description: iOS Simulator を起動・操作する。タップ・スワイプ・スクロール・ピンチ（ズーム）・スクリーンショット取得・テキスト入力・AXツリー参照など。画面確認や UI の操作、アプリの動作確認をエージェントで行う際に使用。simulator 操作、serve-sim、画面をタップ/スクロール、スクショ確認 などの言及時に使用。
+license: MIT
+compatibility: macOS on Apple Silicon (arm64) only; Intel Macs are not supported. Requires Xcode Command Line Tools, Node.js >=18, and python3. Uses serve-sim@0.1.44 via npx (network access on first run). 
 ---
 `serve-sim` CLI と `xcrun simctl` で iOS Simulator を確認・操作するスキル。定型操作は `{THIS_SKILL_DIR}/scripts/`（接続先解決・座標変換・在室判定などを内包）で行う。
 
@@ -8,7 +10,7 @@ description: iOS Simulator を起動・操作する。タップ・スワイプ�
 
 ## 前提
 
-- macOS（Apple Silicon / arm64 のみ。serve-sim 同梱バイナリが arm64 限定で Intel Mac では動かない） / Xcode CLI / Node.js ≥18。1台だけ Booted の前提。複数台時は接続先を明示する。
+- macOS（Apple Silicon / arm64 のみ） / Xcode CLI / Node.js ≥18。
 - **座標系の使い分け**（混同に注意）:
   - スクリプト引数・スクショ目視は **正規化 0..1**（左上 `(0,0)`〜右下 `(1,1)`）を使うのが安全。
   - AX（`/ax`）は**論理ポイント**（iPhone 17 で 402×874）、`/config`・スクショは**ピクセル**（同 1206×2622 = 3倍）。`tap.sh --point` に渡すのは AX 論理ポイントで、スクショのピクセル座標ではない。

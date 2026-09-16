@@ -1,0 +1,22 @@
+{
+  "name": "control-ios",
+  "description": "Agent skills for driving the iOS Simulator from Claude Code.",
+  "owner": {
+    "name": "YamamotoKeita",
+    "url": "https://github.com/YamamotoKeita"
+  },
+  "plugins": [
+    {
+      "name": "control-ios",
+      "source": "./",
+      "description": "Control the iOS Simulator from Claude Code: tap, scroll, pinch, screenshot, type text, inspect the AX tree.",
+      "version": "0.1.0",
+      "category": "testing",
+      "tags": [
+        "ios",
+        "simulator",
+        "xcode"
+      ]
+    }
+  ]
+}

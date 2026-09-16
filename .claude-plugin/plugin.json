@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "control-ios",
+  "version": "0.1.0",
+  "description": "Control the iOS Simulator from Claude Code: tap, scroll, pinch, screenshot, type text, inspect the AX tree.",
+  "author": {
+    "name": "YamamotoKeita",
+    "url": "https://github.com/YamamotoKeita"
+  },
+  "repository": "https://github.com/YamamotoKeita/control-ios",
+  "license": "MIT",
+  "keywords": ["ios", "simulator", "xcode", "ui-testing", "serve-sim"]
+}
